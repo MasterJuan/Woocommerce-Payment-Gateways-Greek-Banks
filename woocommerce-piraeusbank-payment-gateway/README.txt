@@ -31,6 +31,14 @@ Provide to Piraeus bank at epayments@piraeusbank.gr the following information, i
 * Response method : GET
 * Your's server IP Address 
 
+For those who use WPML and have also an English version, you should send the following information to Piraeus bank, in order to provide you with English PosId
+* Website url :  http(s)://yourdomain.gr/en/
+* Referrer url : http(s)://yourdomain.gr/en/checkout/
+* Success page :  http(s)://yourdomain.gr/en/wc-api/WC_Piraeusbank_Gateway?peiraeus=success
+* Failure page : http(s)://yourdomain.gr/en/wc-api/WC_Piraeusbank_Gateway?peiraeus=fail
+* Cancel page : http(s)://yourdomain.gr/en/wc-api/WC_Piraeusbank_Gateway?peiraeus=cancel
+* Response method : GET
+* Your's server IP Address
 
 == Frequently asked questions ==
 
