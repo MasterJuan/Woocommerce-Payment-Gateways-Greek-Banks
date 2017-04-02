@@ -1,9 +1,9 @@
 === Piraeus Bank Greece Payment Gateway for WooCommerce ===
 Contributors: mpbm23, emspacegr
 Tags: ecommerce, woocommerce, payment gateway
-Tested up to: 4.3.1
+Tested up to: 4.7.3
 Requires at least: 4.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -47,6 +47,9 @@ For those who use WPML and have also an English version, you should send the fol
 Yes
 
 == Changelog ==
+= 1.0.1 =
+Small bug fix for Warning.
+
 = 1.0.0 =
 Initial Release
 
