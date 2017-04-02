@@ -4,7 +4,7 @@
   Plugin Name: Pireaus Bank WooCommerce Payment Gateway
   Plugin URI: http://emspace.gr
   Description: Piraeus Bank Payment Gateway allows you to accept payment through various channels such as Maestro, Mastercard, AMex cards, Diners  and Visa cards On your Woocommerce Powered Site.
-  Version: 1.0.0
+  Version: 1.0.1
   Author: emspace.gr
   Author URI: http://emspace.gr
   License: GPL-3.0+
@@ -64,7 +64,12 @@ function woocommerce_piraeusbank_init() {
             $this->description = $this->get_option('description');
             $this->pb_PayMerchantId = $this->get_option('pb_PayMerchantId');
             $this->pb_AcquirerId = $this->get_option('pb_AcquirerId');
-            $this->pb_PosId = $this->get_option('pb_PosId');
+						/* define specific PosId depending on the current language */
+						if( 'en' == ICL_LANGUAGE_CODE ) {
+							$this->pb_PosId = $this->get_option('pb_PosId_EN');
+						} elseif ( 'el' == ICL_LANGUAGE_CODE ){
+							$this->pb_PosId = $this->get_option('pb_PosId_EL');	
+						}
             $this->pb_Username = $this->get_option('pb_Username');
             $this->pb_Password = $this->get_option('pb_Password');
             $this->pb_authorize = $this->get_option('pb_authorize');
@@ -130,14 +135,25 @@ function woocommerce_piraeusbank_init() {
                     'default' => '',
                     'desc_tip' => true
                 ),
-                'pb_PosId' => array(
-                    'title' => __('Piraeus Bank POS ID', 'woocommerce-piraeusbank-payment-gateway'),
+								/* Create seperate field for Greek PosId */
+                'pb_PosId_EL' => array(
+                    'title' => __('Piraeus Bank POS ID - Greek', 'woocommerce-piraeusbank-payment-gateway'),
                     'type' => 'text',
                     'description' => __('Enter your Piraeus Bank POS ID', 'woocommerce-piraeusbank-payment-gateway'),
                     'default' => '',
                     'desc_tip' => true
-                ), 'pb_Username' => array(
-                    'title' => __('Piraeus Bank Username', 'woocommerce-piraeusbank-payment-gateway'),
+                ),
+								/* Create seperate field for English PosId */
+								'pb_PosId_EN' => array(
+                    'title' => __('Piraeus Bank POS ID - English', 'woocommerce-piraeusbank-payment-gateway'),
+                    'type' => 'text',
+                    'description' => __('Enter your Piraeus Bank POS ID', 'woocommerce-piraeusbank-payment-gateway'),
+                    'default' => '',
+                    'desc_tip' => true
+                ),
+								'pb_Username' => array(
+
+										'title' => __('Piraeus Bank Username', 'woocommerce-piraeusbank-payment-gateway'),
                     'type' => 'text',
                     'description' => __('Enter your Piraeus Bank Username', 'woocommerce-piraeusbank-payment-gateway'),
                     'default' => '',
@@ -242,6 +258,7 @@ function woocommerce_piraeusbank_init() {
                     'Bnpl' => '0',
                     'Parameters' => ''
                 );
+				
                 $xml = array(
                     'Request' => $ticketRequest
                 );
@@ -280,8 +297,13 @@ function woocommerce_piraeusbank_init() {
 					});
 				jQuery("#submit_pb_payment_form").click();
 			');
-
-                    $LanCode = "el-GR";
+					 
+					 /* Change language code */
+					 if( 'el' == ICL_LANGUAGE_CODE ) {
+            $LanCode = "el-GR";
+					 }else{
+						$LanCode = "en-US";
+					 }
                     /*
                       Other available Language codes
                       en-US: English
@@ -308,9 +330,11 @@ function woocommerce_piraeusbank_init() {
 				</form>';
                 } else {
                     echo __('An error occured, please contact the Administrator', 'woocommerce-piraeusbank-payment-gateway');
+					echo ('Result code is '.$oResult->IssueNewTicketResult->ResultCode);
                 }
             } catch (SoapFault $fault) {
                 $order->add_order_note(__('Error' . $fault, ''));
+				echo __('Error' . $fault, '');
             }
         }
 
@@ -321,7 +345,8 @@ function woocommerce_piraeusbank_init() {
 
             /*
               get_permalink was used instead of $order->get_checkout_payment_url in redirect in order to have a fixed checkout page to provide to Piraeus Bank
-             */
+            
+						*/
 
             $order = new WC_Order($order_id);
             return array(
@@ -551,12 +576,14 @@ function woocommerce_piraeusbank_init() {
         if (is_order_received_page() && ( 'piraeusbank_gateway' == $payment_method )) {
 
             $piraeusbank_message = get_post_meta($order_id, '_piraeusbank_message', true);
+			 if (!empty($piraeusbank_message)) {
             $message = $piraeusbank_message['message'];
             $message_type = $piraeusbank_message['message_type'];
 
             delete_post_meta($order_id, '_piraeusbank_message');
 
-            if (!empty($piraeusbank_message)) {
+           
+
                 wc_add_notice($message, $message_type);
             }
         }
@@ -621,4 +648,3 @@ function woocommerce_piraeusbank_init() {
 
     }
 }
-
